@@ -1,0 +1,91 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>حاسبة القرض البنكي</title>
+    <style>
+        body { font-family: Arial; max-width: 600px; margin: auto; padding: 20px; background-color: #f8f8f8; }
+        h1 { text-align: center; color: #2c3e50; }
+        label { display: block; margin-top: 10px; font-weight: bold; }
+        input, select { width: 100%; padding: 8px; margin-top: 5px; }
+        .radio-group { margin-top: 10px; }
+        .radio-group label { display: inline-block; margin-right: 10px; font-weight: normal; }
+        button { margin-top: 15px; padding: 10px; width: 100%; background-color: #3498db; color: white; border: none; font-size: 16px; }
+        .result { margin-top: 20px; background: #fff; padding: 10px; border-radius: 5px; border: 1px solid #ddd; }
+        .ad-box { margin-top: 30px; text-align: center; }
+    </style>
+</head>
+<body>
+    <h1>حاسبة القرض البنكي</h1>
+
+    <label for="salary">الراتب الشهري (ريال):</label>
+    <input type="number" id="salary" placeholder="أدخل راتبك">
+
+    <label for="months">عدد الشهور:</label>
+    <input type="number" id="months" placeholder="مثلاً: 60">
+
+    <label>اختر نوع النسبة:</label>
+    <div class="radio-group">
+        <label><input type="radio" name="rateType" value="فائدة" checked> فائدة سنوية (%)</label>
+        <label><input type="radio" name="rateType" value="هامش ربح"> هامش ربح (%)</label>
+    </div>
+
+    <label for="rate">النسبة (٪):</label>
+    <input type="number" id="rate" placeholder="مثلاً: 5">
+
+    <button onclick="calculate()">احسب</button>
+
+    <div class="result" id="output"></div>
+
+    <div class="ad-box">
+        <!-- ضع كود إعلان Google AdSense هنا -->
+        <p>إعلان</p>
+        <ins class="adsbygoogle"
+            style="display:block"
+            data-ad-client="ca-pub-xxxxxxxxxxxxxxxx"
+            data-ad-slot="1234567890"
+            data-ad-format="auto"
+            data-full-width-responsive="true"></ins>
+        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+        <script>
+             (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
+    </div>
+
+    <script>
+        function calculate() {
+            const salary = parseFloat(document.getElementById("salary").value);
+            const months = parseInt(document.getElementById("months").value);
+            const rate = parseFloat(document.getElementById("rate").value);
+            const rateType = document.querySelector("input[name='rateType']:checked").value;
+
+            if (isNaN(salary) || isNaN(months) || isNaN(rate)) {
+                document.getElementById("output").innerHTML = "<p style='color:red'>يرجى إدخال جميع البيانات بشكل صحيح.</p>";
+                return;
+            }
+
+            const maxInstallment = salary * 0.33;
+            const annualRate = rateType === "هامش ربح" ? rate * 2 : rate;
+            const monthlyRate = annualRate / 12 / 100;
+
+            let loanAmount;
+            if (monthlyRate === 0) {
+                loanAmount = maxInstallment * months;
+            } else {
+                loanAmount = maxInstallment * (Math.pow(1 + monthlyRate, months) - 1) / (monthlyRate * Math.pow(1 + monthlyRate, months));
+            }
+
+            const totalPaid = maxInstallment * months;
+            const totalInterest = totalPaid - loanAmount;
+
+            document.getElementById("output").innerHTML = `
+                <p><strong>أقصى مبلغ قرض:</strong> ${loanAmount.toFixed(2)} ريال</p>
+                <p><strong>القسط الشهري:</strong> ${maxInstallment.toFixed(2)} ريال</p>
+                <p><strong>إجمالي الفائدة:</strong> ${totalInterest.toFixed(2)} ريال</p>
+                <p><strong>إجمالي المبلغ المدفوع:</strong> ${totalPaid.toFixed(2)} ريال</p>
+            `;
+        }
+    </script>
+</body>
+</html>
